@@ -120,7 +120,7 @@
             <attribute name="Index" type=""/>
         </attributes>
     </diamond>
-    <diamond id="38" is_weak="false" name="Operates" x="1152" y="548">
+    <diamond id="38" is_weak="false" name="Operates" x="1138" y="552">
         <attributes/>
     </diamond>
     <diamond id="39" is_weak="false" name="SectionForRoute" x="1149" y="216">
@@ -238,11 +238,11 @@
     </line>
     <line cardinality_string="(1,1)" has_u="false" id="42" is_weak="false" role="" style="0" turned="false">
         <connection connection_side="3" direction="1" object_id="26" relation_point_x="1142" relation_point_y="476"/>
-        <connection connection_side="2" direction="0" object_id="38" relation_point_x="1184" relation_point_y="564"/>
+        <connection connection_side="0" direction="0" object_id="38" relation_point_x="1138" relation_point_y="568"/>
     </line>
     <line cardinality_string="(1,n)" has_u="false" id="43" is_weak="false" role="" style="0" turned="false">
         <connection connection_side="1" direction="1" object_id="28" relation_point_x="1158" relation_point_y="683"/>
-        <connection connection_side="3" direction="1" object_id="38" relation_point_x="1168" relation_point_y="580"/>
+        <connection connection_side="3" direction="1" object_id="38" relation_point_x="1154" relation_point_y="584"/>
     </line>
     <line cardinality_string="(1,n)" has_u="false" id="45" is_weak="false" role="" style="0" turned="false">
         <connection connection_side="0" direction="0" object_id="28" relation_point_x="1100" relation_point_y="719"/>
@@ -276,7 +276,7 @@
         <connection connection_side="3" direction="1" object_id="63" relation_point_x="1675" relation_point_y="535"/>
         <connection connection_side="0" direction="0" object_id="64" relation_point_x="1671" relation_point_y="670"/>
     </line>
-    <line cardinality_string="(1,1)" has_u="false" id="66" is_weak="false" role="" style="0" turned="false">
+    <line cardinality_string="(0,1)" has_u="false" id="66" is_weak="false" role="" style="0" turned="false">
         <connection connection_side="1" direction="1" object_id="62" relation_point_x="1698" relation_point_y="742"/>
         <connection connection_side="3" direction="1" object_id="64" relation_point_x="1687" relation_point_y="686"/>
     </line>
