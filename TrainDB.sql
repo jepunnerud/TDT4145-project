@@ -1,3 +1,7 @@
+CREATE DATABASE IF NOT EXISTS RailwaySystem;
+
+USE RailwaySystem;
+
 CREATE TABLE RailwayStation(
     Name TEXT NOT NULL,
     Altitude REAL NOT NULL,
@@ -20,6 +24,7 @@ CREATE TABLE Subsection(
     DoubleTrack INTEGER NOT NULL,
     StartStation TEXT NOT NULL,
     EndStation TEXT NOT NULL,
+    CHECK (Length > 0),
     CONSTRAINT FK_StartStation FOREIGN KEY (Name) REFERENCES RailwayStation (Name) ON DELETE CASCADE,
     CONSTRAINT FK_EndStation FOREIGN KEY (Name) REFERENCES RailwayStation (Name) ON DELETE CASCADE
 );
@@ -32,10 +37,11 @@ CREATE TABLE TrainRoute(
     Direction INTEGER NOT NULL,
     OperatorID INTEGER NOT NULL,
     TrackID INTEGER NOT NULL,
-    ArragementID INTEGER NOT NULL CONSTRAINT PK_TrainRoute PRIMARY KEY (TrainRouteID),
+    ArrangementID INTEGER NOT NULL, 
+    CONSTRAINT PK_TrainRoute PRIMARY KEY (TrainRouteID),
     CONSTRAINT FK_Operator FOREIGN KEY (OperatorID) REFERENCES Operator (OperatorID) ON DELETE CASCADE,
     CONSTRAINT FK_TrackSection FOREIGN KEY (TrackID) REFERENCES TrackSection (TrackID) ON DELETE CASCADE,
-    CONSTRAINT FK_Arragement FOREIGN KEY (ArragementID) REFERENCES CarArrangement (ArragementID) ON DELETE CASCADE
+    CONSTRAINT FK_Arrangement FOREIGN KEY (ArrangementID) REFERENCES CarArrangement (ArrangementID) ON DELETE CASCADE
 );
 CREATE TABLE TrainOccurence(
     RouteID INTEGER NOT NULL,
@@ -65,16 +71,80 @@ CREATE TABLE CustomerOrder(
     CONSTRAINT FK_Customer FOREIGN KEY (CustomerID) REFERENCES Customer (CustomerNo) ON DELETE CASCADE
 );
 CREATE TABLE SeatTicket(
-    TicketID INTEGER NOT NULL,
+    TicketNo INTEGER NOT NULL,
     OrderNo INTEGER NOT NULL,
     TicketStart TEXT NOT NULL,
     TicketEnd TEXT NOT NULL,
     RouteID INTEGER NOT NULL,
     TicketDate TEXT NOT NULL,
     SeatNo INTEGER NOT NULL,
-    CONSTRAINT PK_Ticket PRIMARY KEY (TicketID),
+    CONSTRAINT PK_Ticket PRIMARY KEY (TicketNo),
     CONSTRAINT FK_OrderNo FOREIGN KEY (OrderNo) REFERENCES CustomerOrder (OrderNo) ON DELETE CASCADE,
     CONSTRAINT FK_TicketStart FOREIGN KEY (TicketStart) REFERENCES RailwayStation (Name) ON DELETE CASCADE,
     CONSTRAINT FK_TicketEnd FOREIGN KEY (TicketEnd) REFERENCES RailwayStation (Name) ON DELETE CASCADE,
     CONSTRAINT FK_Occurence FOREIGN KEY (RouteID, TicketDate) REFERENCES TrainOccurence (RouteID, RouteDate) ON DELETE CASCADE
+);
+CREATE TABLE BedTicket(
+    TicketNo INTEGER NOT NULL,
+    OrderNo INTEGER NOT NULL,
+    TicketStart TEXT NOT NULL,
+    TicketEnd TEXT NOT NULL,
+    CompartmentNo INTEGER NOT NULL,
+    BedNo INTEGER NOT NULL,
+    CONSTRAINT PK_Ticket PRIMARY KEY (TicketNo),
+    CONSTRAINT FK_OrderNo FOREIGN KEY (OrderNo) REFERENCES CustomerOrder (OrderNo) ON DELETE CASCADE,
+    CONSTRAINT FK_TicketStart FOREIGN KEY (TicketStart) REFERENCES RailwayStation (Name) ON DELETE CASCADE,
+    CONSTRAINT FK_TicketEnd FOREIGN KEY (TicketEnd) REFERENCES RailwayStation (Name) ON DELETE CASCADE
+);
+CREATE TABLE Car(
+    CarID INTEGER NOT NULL,
+    CONSTRAINT PK_Car PRIMARY KEY (CarID)
+);
+CREATE TABLE ChairCar(
+    CarID INTEGER NOT NULL,
+    OperatorID INTEGER NOT NULL,
+    SeatingRowCount INTEGER NOT NULL,
+    SeatsPerRow INTEGER NOT NULL,
+    CHECK (SeatingRowCount > 0),
+    CONSTRAINT FK_Car FOREIGN KEY (CarID) REFERENCES Car (CarID) ON DELETE CASCADE,
+    CONSTRAINT FK_Operator FOREIGN KEY (OperatorID) REFERENCES Operator (OperatorID) ON DELETE CASCADE
+);
+CREATE TABLE SleepingCar(
+    CarID INTEGER NOT NULL,
+    OperatorID INTEGER NOT NULL,
+    SleepingCompartmentCount INTEGER NOT NULL,
+    CHECK (SleepingCompartmentCount > 0),
+    CONSTRAINT FK_Car FOREIGN KEY (CarID) REFERENCES Car (CarID) ON DELETE CASCADE,
+    CONSTRAINT FK_Operator FOREIGN KEY (OperatorID) REFERENCES Operator (OperatorID) ON DELETE CASCADE
+);
+CREATE TABLE Seat(
+    CarID INTEGER NOT NULL,
+    SeatNo INTEGER NOT NULL,
+    CONSTRAINT FK_Car FOREIGN KEY (CarID) REFERENCES ChairCar (CarID) ON DELETE CASCADE,
+    CONSTRAINT PK_Seat PRIMARY KEY (CarID, SeatNo)
+);
+CREATE TABLE Bed(
+    CarID INTEGER NOT NULL,
+    CompartmentNo INTEGER NOT NULL,
+    BedNo INTEGER NOT NULL,
+    CONSTRAINT FK_Car FOREIGN KEY (CarID) REFERENCES SleepingCar (CarID) ON DELETE CASCADE,
+    CONSTRAINT PK_Bed PRIMARY KEY (CarID, BedNo)
+);
+CREATE TABLE RouteTimetable(
+    RouteID INTEGER NOT NULL,
+    RailwayStation TEXT NOT NULL,
+    Time INTEGER NOT NULL,
+    CONSTRAINT FK_RouteID FOREIGN KEY (RouteID) REFERENCES TrainRoute (RouteID) ON DELETE CASCADE,
+    CONSTRAINT FK_RailwayStation FOREIGN KEY (RailwayStation) REFERENCES RailwayStation (Name) ON DELETE CASCADE,
+    CONSTRAINT PK_Timetable PRIMARY KEY (FK_RouteID, FK_RailwayStation)
+);
+CREATE TABLE CarArrangement(
+    ArrangementID INTEGER NOT NULL,
+    CONSTRAINT PK_Arrangement PRIMARY KEY (ArrangementID)
+);
+CREATE TABLE CarInArrangement(
+    ArragementID INTEGER NOT NULL,
+    CarID INTEGER NOT NULL,
+    CONSTRAINT FK_Arrangement FOREIGN KEY (ArragementID) REFERENCES CarArrangement (ArragementID) ON DELETE CASCADE,
+    CONSTRAINT FK_Car FOREIGN KEY (CarID) REFERENCES Car (CarID) ON DELETE CASCADE
 );
