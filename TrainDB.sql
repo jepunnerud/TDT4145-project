@@ -67,19 +67,19 @@ CREATE TABLE CustomerOrder(
     OrderNo INTEGER NOT NULL,
     CustomerID INTEGER NOT NULL,
     orderDateTime TEXT NOT NULL,
-    CONSTRAINT PK_OrderNo PRIMARY KEY (OrderNo),
+    CONSTRAINT PK_OrderNo PRIMARY KEY (OrderNo) ON UPDATE CASCADE,
     CONSTRAINT FK_Customer FOREIGN KEY (CustomerID) REFERENCES Customer (CustomerNo) ON DELETE CASCADE
 );
 CREATE TABLE SeatTicket(
     TicketNo INTEGER NOT NULL,
-    OrderNo INTEGER NOT NULL,
+    OrderNo INTEGER,
     TicketStart TEXT NOT NULL,
     TicketEnd TEXT NOT NULL,
     RouteID INTEGER NOT NULL,
     TicketDate TEXT NOT NULL,
     SeatNo INTEGER NOT NULL,
     CONSTRAINT PK_Ticket PRIMARY KEY (TicketNo),
-    CONSTRAINT FK_OrderNo FOREIGN KEY (OrderNo) REFERENCES CustomerOrder (OrderNo) ON DELETE CASCADE,
+    CONSTRAINT FK_OrderNo FOREIGN KEY (OrderNo) REFERENCES CustomerOrder (OrderNo),
     CONSTRAINT FK_TicketStart FOREIGN KEY (TicketStart) REFERENCES RailwayStation (Name) ON DELETE CASCADE,
     CONSTRAINT FK_TicketEnd FOREIGN KEY (TicketEnd) REFERENCES RailwayStation (Name) ON DELETE CASCADE,
     CONSTRAINT FK_Occurence FOREIGN KEY (RouteID, TicketDate) REFERENCES TrainOccurence (RouteID, RouteDate) ON DELETE CASCADE
