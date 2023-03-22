@@ -28,14 +28,17 @@ def get_train_route(railway_station, weekday):
     for route in valid_routes:
         if route[1] == 1:
             list_route = list(route)
-            cleaned_reversed_direction = (list_route[0], list_route[2], list_route[4], list_route[3])
+            cleaned_reversed_direction = [list_route[0], list_route[2], list_route[4], list_route[3]]
             cleaned_info.append(cleaned_reversed_direction)
         else:
             list_route = list(route)
-            cleaned = (list_route[0], list_route[2], list_route[3], list_route[4])
-            cleaned_info.append(cleaned)
-        
-    print(cleaned_info)
+            list_route.remove(list_route[1])
+            cleaned_info.append(list_route)
+    
+    date = datetime.strptime(cleaned_info[0][1], "%Y-%m-%d")
+    print(f"{weekdays[date.weekday()]} - {date}")  
+    for route in cleaned_info:
+        print(f"Route {route[0]}: {route[2]} - {route[3]}")
     return cleaned_info
 
-#get_train_route("Steinkjer", "Monday")
+get_train_route("Steinkjer", "Monday")
