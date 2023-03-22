@@ -10,18 +10,32 @@ def get_train_route(railway_station, weekday):
                 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
     valid_routes = []
+    cleaned_info = []
 
     train_routes = cursor.execute(
-        """SELECT TrainRoute.TrainRouteID, TrainOccurence.RouteDate FROM TrainRoute
-        OUTER JOIN TrainOccurence ON TrainOccurence.RouteID = TrainRoute.TrainRouteID
+        """SELECT TrainRoute.TrainRouteID, TrainRoute.Direction, TrainOccurence.RouteDate, TrackSection.StartStation, TrackSection.EndStation FROM TrainRoute
+        LEFT JOIN TrainOccurence ON TrainOccurence.RouteID = TrainRoute.TrainRouteID
         LEFT JOIN TrackSection ON TrainRoute.TrackID = TrackSection.TrackID 
         LEFT JOIN HasSubsection ON TrackSection.TrackID = HasSubsection.TrackID
         LEFT JOIN Subsection ON HasSubsection.SubsectionID = Subsection.SubsectionID
         WHERE Subsection.StartStation = ? OR TrackSection.EndStation = ?""", (railway_station, railway_station))
 
     for route in train_routes:
-        date = datetime.strptime(route[1], "%Y-%m-%d")
+        date = datetime.strptime(route[2], "%Y-%m-%d")
         if date.weekday() == weekdays.index(weekday):
             valid_routes.append(route)
+    
+    for route in valid_routes:
+        if route[1] == 1:
+            list_route = list(route)
+            cleaned_reversed_direction = (list_route[0], list_route[2], list_route[4], list_route[3])
+            cleaned_info.append(cleaned_reversed_direction)
+        else:
+            list_route = list(route)
+            cleaned = (list_route[0], list_route[2], list_route[3], list_route[4])
+            cleaned_info.append(cleaned)
+        
+    print(cleaned_info)
+    return cleaned_info
 
-    return valid_routes
+#get_train_route("Steinkjer", "Monday")

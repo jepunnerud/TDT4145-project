@@ -82,7 +82,7 @@ for i in range(1, 9):
 # Train Routes
 cursor.execute("INSERT INTO TrainRoute VALUES (1, 0, 1, 2, 1)")
 cursor.execute("INSERT INTO TrainRoute VALUES (2, 0, 1, 2, 2)")
-cursor.execute("INSERT INTO TrainRoute VALUES (3, 1, 1, 2, 3)")
+cursor.execute("INSERT INTO TrainRoute VALUES (3, 1, 1, 3, 3)")
 
 # Train Occurences
 cursor.execute("INSERT INTO TrainOccurence VALUES (1, '2023-04-03')")
