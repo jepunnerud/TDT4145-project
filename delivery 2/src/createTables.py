@@ -47,8 +47,9 @@ CREATE TABLE IF NOT EXISTS Subsection(
 cursor.execute(
     """
 CREATE TABLE IF NOT EXISTS HasSubsection(
-    SubsectionID INTEGER NOT NULL,
     TrackID INTEGER NOT NULL,
+    SubsectionID INTEGER NOT NULL,
+    OrderIndex INTEGER NOT NULL,
     CONSTRAINT PK_Track PRIMARY KEY (TrackID, SubsectionID),
     CONSTRAINT FK_Subsection FOREIGN KEY (SubsectionID) REFERENCES Subsection (SubsectionID) ON DELETE CASCADE,
     CONSTRAINT FK_Track FOREIGN KEY (TrackID) REFERENCES Track (TrackID) ON DELETE CASCADE
@@ -76,7 +77,7 @@ cursor.execute(
     """
 CREATE TABLE IF NOT EXISTS TrainOccurence(
     RouteID INTEGER NOT NULL,
-    RouteDate TEXT UNIQUE NOT NULL,
+    RouteDate TEXT NOT NULL,
     CONSTRAINT PK_TrainOccurence PRIMARY KEY (RouteID, RouteDate),
     CONSTRAINT FK_TrainRoute FOREIGN KEY (RouteID) REFERENCES TrainRoute (TrainRouteID) ON DELETE CASCADE
 );
@@ -221,7 +222,7 @@ cursor.execute(
 CREATE TABLE IF NOT EXISTS RouteTimetable(
     RouteID INTEGER NOT NULL,
     RailwayStation TEXT NOT NULL,
-    Time INTEGER NOT NULL,
+    Time TEXT NOT NULL,
     CONSTRAINT FK_RouteID FOREIGN KEY (RouteID) REFERENCES TrainRoute (RouteID) ON DELETE CASCADE,
     CONSTRAINT FK_RailwayStation FOREIGN KEY (RailwayStation) REFERENCES RailwayStation (Name) ON DELETE CASCADE,
     CONSTRAINT PK_Timetable PRIMARY KEY (RouteID, RailwayStation)
