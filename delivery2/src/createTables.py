@@ -102,9 +102,7 @@ CREATE TABLE IF NOT EXISTS Customer(
     Name TEXT NOT NULL,
     email TEXT NOT NULL,
     phoneNo INTEGER NOT NULL,
-    OperatorID INTEGER NOT NULL,
-    CONSTRAINT PK_CustomerNo PRIMARY KEY (CustomerNo),
-    CONSTRAINT FK_RegisteredCustomer FOREIGN KEY (OperatorID) REFERENCES Operator (OperatorID) ON DELETE CASCADE
+    CONSTRAINT PK_CustomerNo PRIMARY KEY (CustomerNo)
 );
 """
 )
