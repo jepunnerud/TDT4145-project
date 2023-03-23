@@ -24,10 +24,18 @@ cursor.execute(
 )
 
 # Subsections on Nordlandsbanen
-cursor.execute("INSERT INTO Subsection VALUES (1, 120, 1, 'Trondheim', 'Steinkjer')")
-cursor.execute("INSERT INTO Subsection VALUES (2, 280, 1, 'Steinkjer', 'Mosjøen')")
-cursor.execute("INSERT INTO Subsection VALUES (3, 90, 1, 'Mosjøen', 'Mo i Rana')")
-cursor.execute("INSERT INTO Subsection VALUES (4, 170, 1, 'Mo i Rana', 'Fauske')")
+cursor.execute(
+    "INSERT INTO Subsection VALUES (1, 120, 1, 'Trondheim', 'Steinkjer')"
+)
+cursor.execute(
+    "INSERT INTO Subsection VALUES (2, 280, 1, 'Steinkjer', 'Mosjøen')"
+)
+cursor.execute(
+    "INSERT INTO Subsection VALUES (3, 90, 1, 'Mosjøen', 'Mo i Rana')"
+)
+cursor.execute(
+    "INSERT INTO Subsection VALUES (4, 170, 1, 'Mo i Rana', 'Fauske')"
+)
 cursor.execute("INSERT INTO Subsection VALUES (5, 60, 1, 'Fauske', 'Bodø')")
 
 # Subsections on TrackSections
