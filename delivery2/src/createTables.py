@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS Customer(
     CustomerNo INTEGER NOT NULL,
     Name TEXT NOT NULL,
     email TEXT NOT NULL,
-    phoneNo INTEGER NOT NULL,
+    phoneNo INTEGER NOT NULL UNIQUE,
     CONSTRAINT PK_CustomerNo PRIMARY KEY (CustomerNo)
 );
 """
