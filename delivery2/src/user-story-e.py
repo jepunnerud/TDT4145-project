@@ -19,9 +19,15 @@ def register_customer():
         print("Email cannot be empty!")
         email = input("Email: ")
 
+    cursor.execute("SELECT PhoneNo FROM Customer")
+    phoneNos = cursor.fetchall()
+    phoneNos = [str(phoneNo[0]) for phoneNo in phoneNos]
+    print(phoneNos)
     phoneNo = input("Phone number: ")
-    while not phoneNo or not phoneNo.isdigit():
-        print("Phone number cannot be empty, and it must be an integer!")
+    while phoneNo in phoneNos or not phoneNo or not phoneNo.isdigit():
+        print("Phone number already registered!") if phoneNo in phoneNos else print(
+            "Phone number cannot be empty, and it must be an integer!"
+        )
         phoneNo = input("Phone number: ")
 
     # check how many customers are already registered
