@@ -44,3 +44,4 @@ def get_train_route(railway_station, weekday):
 
 
 get_train_route("Steinkjer", "Monday")
+con.close()
