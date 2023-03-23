@@ -20,8 +20,8 @@ def register_customer():
         email = input("Email: ")
 
     phoneNo = input("Phone number: ")
-    while not phoneNo:
-        print("Phone number cannot be empty!")
+    while not phoneNo or not phoneNo.isdigit():
+        print("Phone number cannot be empty, and it must be an integer!")
         phoneNo = input("Phone number: ")
 
     # check how many customers are already registered
@@ -29,7 +29,8 @@ def register_customer():
     count = cursor.fetchone()[0]
     # add the new customer to the database
     cursor.execute(
-        "INSERT INTO Customer VALUES (?, ?, ?, ?)", (count + 1, name, email, phoneNo)
+        "INSERT INTO Customer VALUES (?, ?, ?, ?)",
+        (count + 1, name, email, int(phoneNo)),
     )
     con.commit()
     print("Customer registered successfully!")
