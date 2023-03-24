@@ -20,43 +20,57 @@ def get_customer():
     return customerID[0]
 
 
-def get_purchases():
+def get_orders():
     # Get customer id. This uses the get_customer function, asking if the user wants to try again if no customer id is found from a certain phone number.
     customerID = get_customer()
     tryAgain = True
     while tryAgain:
         if not customerID:
             tryAgain = input("Try again? (y/n) ").lower() == "y"
-            if tryAgain:
-                customerID = get_customer()
+            if not tryAgain:
+                return []
+            customerID = get_customer()
         else:
             tryAgain = False
 
     # Get all customer orders by the customer with customerID
     cursor.execute(
-        "SELECT * FROM CustomerOrder WHERE CustomerID = ?", (int(customerID),)
+        "SELECT OrderNo, orderDateTime FROM CustomerOrder WHERE CustomerID = ?",
+        (int(customerID),),
     )
     orders = cursor.fetchall()
     if not orders:
         print("No orders found for customer ID", customerID)
-    else:
-        print("Orders found for customer ID", customerID)
-        for order in orders:
-            print(order)
-
-    # get all tickets purchased by the customer
-    # cursor.execute(
-    #     "SELECT * FROM Ticket WHERE CustomerID = ?", (int(customerID),)
-    # )
-    # tickets = cursor.fetchall()
-    # if not tickets:
-    #     print("No tickets found for customer ID", customerID)
-    # else:
-    #     print("Tickets found for customer ID", customerID)
-    #     for ticket in tickets:
-    #         print(ticket)
-    print(customerID)
+        return []
+    orders = [list(order) for order in orders]
+    print(orders)
+    return orders
 
 
-get_purchases()
+def get_tickets(order):
+    # Get all tickets for the order with orderID
+    cursor.execute("SELECT * FROM SeatTicket WHERE OrderNo = ?", (order[0],))
+    seat_tickets = cursor.fetchall()
+    cursor.execute("SELECT * FROM BedTicket WHERE OrderNo = ?", (order[0],))
+    bed_tickets = cursor.fetchall()
+    if not (seat_tickets or bed_tickets):
+        print("No tickets found for order ID", order[0])
+        return []
+    tickets = [list(ticket) for ticket in seat_tickets.extend(bed_tickets)]
+    return tickets
+
+
+def print_all_tickets(orders):
+    for order in orders:
+        print("Order number:", order[0])
+        print("Order date and time:", order[1])
+        print("Tickets:")
+        tickets = get_tickets(order)
+        for ticket in tickets:
+            print(ticket)
+        print()
+
+
+print_all_tickets(get_orders())
+
 con.close()
