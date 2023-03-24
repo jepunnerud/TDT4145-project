@@ -145,11 +145,14 @@ CREATE TABLE IF NOT EXISTS BedTicket(
     OrderNo INTEGER NOT NULL,
     TicketStart TEXT NOT NULL,
     TicketEnd TEXT NOT NULL,
+    RouteID INTEGER NOT NULL,
+    TicketDate TEXT NOT NULL,
     BedNo INTEGER NOT NULL,
     CONSTRAINT PK_Ticket PRIMARY KEY (TicketNo),
     CONSTRAINT FK_OrderNo FOREIGN KEY (OrderNo) REFERENCES CustomerOrder (OrderNo) ON DELETE CASCADE,
     CONSTRAINT FK_TicketStart FOREIGN KEY (TicketStart) REFERENCES RailwayStation (Name) ON DELETE CASCADE,
-    CONSTRAINT FK_TicketEnd FOREIGN KEY (TicketEnd) REFERENCES RailwayStation (Name) ON DELETE CASCADE
+    CONSTRAINT FK_TicketEnd FOREIGN KEY (TicketEnd) REFERENCES RailwayStation (Name) ON DELETE CASCADE,
+    CONSTRAINT FK_Occurence FOREIGN KEY (RouteID, TicketDate) REFERENCES TrainOccurence (RouteID, RouteDate) ON DELETE CASCADE
 );
 """
 )
