@@ -8,7 +8,7 @@ cursor = con.cursor()
 
 def register_customer():
 
-    # register customer name, email and phone number
+    # Register customer name and email
     name = input("Name: ")
     while not name:
         print("Name cannot be empty!")
@@ -19,6 +19,7 @@ def register_customer():
         print("Email cannot be empty!")
         email = input("Email: ")
 
+    # Register customer phone number. Makes sure the phone number is an integer and that it is unique
     cursor.execute("SELECT PhoneNo FROM Customer")
     phoneNos = cursor.fetchall()
     phoneNos = [str(phoneNo[0]) for phoneNo in phoneNos]
@@ -30,10 +31,11 @@ def register_customer():
         )
         phoneNo = input("Phone number: ")
 
-    # check how many customers are already registered
+    # Check how many customers are already registered
     cursor.execute("SELECT COUNT(*) FROM Customer")
     count = cursor.fetchone()[0]
-    # add the new customer to the database
+
+    # Ddd the new customer to the database
     cursor.execute(
         "INSERT INTO Customer VALUES (?, ?, ?, ?)",
         (count + 1, name, email, int(phoneNo)),
