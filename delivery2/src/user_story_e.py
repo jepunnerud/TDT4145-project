@@ -23,7 +23,6 @@ def register_customer():
     cursor.execute("SELECT PhoneNo FROM Customer")
     phoneNos = cursor.fetchall()
     phoneNos = [str(phoneNo[0]) for phoneNo in phoneNos]
-    print(phoneNos)
     phoneNo = input("Phone number: ")
     while phoneNo in phoneNos or not phoneNo or not phoneNo.isdigit():
         print("Phone number already registered!") if phoneNo in phoneNos else print(
