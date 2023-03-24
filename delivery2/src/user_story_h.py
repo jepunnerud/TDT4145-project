@@ -7,6 +7,7 @@ cursor = con.cursor()
 
 
 def get_customer():
+    # Get customer id from phone number
     phoneNo = input("Phone number: ")
     while not phoneNo or not phoneNo.isdigit():
         print("Phone number cannot be empty, and it must be an integer!")
@@ -20,7 +21,7 @@ def get_customer():
 
 
 def get_purchases():
-    # get customer ID from phone number
+    # Get customer id. This uses the get_customer function, asking if the user wants to try again if no customer id is found from a certain phone number.
     customerID = get_customer()
     tryAgain = True
     while tryAgain:
@@ -31,7 +32,7 @@ def get_purchases():
         else:
             tryAgain = False
 
-    # get all customer orders by the customer with customerID
+    # Get all customer orders by the customer with customerID
     cursor.execute(
         "SELECT * FROM CustomerOrder WHERE CustomerID = ?", (int(customerID),)
     )
