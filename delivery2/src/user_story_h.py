@@ -66,8 +66,7 @@ def print_all_tickets(orders):
         print("Order date and time:", order[1])
         print("Tickets:")
         tickets = get_tickets(order)
-        for ticket in tickets:
-            print(ticket)
+        (print(ticket) for ticket in tickets)
         print()
 
 
