@@ -41,7 +41,3 @@ def register_customer():
     )
     con.commit()
     print("Customer registered successfully!")
-
-
-register_customer()
-con.close()

@@ -70,6 +70,4 @@ def print_all_tickets(orders):
         print()
 
 
-print_all_tickets(get_orders())
-
-con.close()
+get_orders()

@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS TrainRoute(
 );
 CREATE TABLE IF NOT EXISTS TrainOccurence(
     RouteID INTEGER NOT NULL,
-    RouteDate TEXT UNIQUE NOT NULL,
+    RouteDate TEXT NOT NULL,
     CONSTRAINT PK_TrainOccurence PRIMARY KEY (FK_TrainRoute, RouteDate),
     CONSTRAINT FK_TrainRoute FOREIGN KEY (RouteID) REFERENCES TrainRoute (TrainRouteID) ON DELETE CASCADE
 );
