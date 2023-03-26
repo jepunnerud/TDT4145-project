@@ -55,28 +55,31 @@ def purchase_ticket():
 def find_available_seat(train_route, date):
 
     print(train_route)
-    available_seats = cursor.execute(
+    cursor.execute(
         """SELECT ChairCar.CarID, Seat.SeatNo FROM Seat
         LEFT JOIN ChairCar ON Seat.CarID = ChairCar.CarID
         LEFT JOIN CarInArrangement ON ChairCar.CarID = CarInArrangement.CarID
         LEFT JOIN TrainRoute ON TrainRoute.ArrangementID = CarInArrangement.ArrangementID
         LEFT JOIN TrainOccurence ON TrainOccurence.RouteID = TrainRoute.TrainRouteID
         WHERE TrainRoute.TrainRouteID = ? AND TrainOccurence.RouteDate = ? 
-        AND NOT EXISTS (SELECT SeatTicket.SeatNo FROM SeatTicket 
-        LEFT JOIN CustomerOrder ON CustomerOrder.OrderNo = SeatTicket.OrderNo
-        LEFT JOIN TrainOccurence ON SeatTicket.TicketDate = TrainOccurence.RouteDate
-        LEFT JOIN TrainRoute ON TrainRoute.TrainRouteID = TrainOccurence.RouteID
-        LEFT JOIN CarArrangement ON CarArrangement.ArrangementID = TrainRoute.ArrangementID
-        LEFT JOIN CarInArrangement ON CarArrangement.ArrangementID = CarInArrangement.ArrangementID
-        LEFT JOIN ChairCar ON ChairCar.CarID = CarInArrangement.CarID
-        LEFT JOIN Seat ON Seat.CarID = ChairCar.CarID
-        WHERE Seat.SeatNo = SeatTicket.SeatNo)""",
+        AND NOT EXISTS (SELECT SeatTicket.SeatNo FROM SeatTicket """,
         (train_route, date),
     )
+    seats = cursor.fetchall()
 
-    available_seats = list(available_seats)
+    cursor.execute(
+        """SELECT SeatTicket.CarID, SeatTicket.SeatNo, SeatTicket.TicketStart, SeatTicket.TicketEnd FROM SeatTicket
+                                    INNER JOIN CustomerOrder ON CustomerOrder.OrderNo = SeatTicket.OrderNo
+                                    WHERE SeatTicket.OrderNo = CustomerOrder.OrderNo"""
+    )
+    occupied = cursor.fetchall()
 
-    for seat in available_seats:
+    free_seats = []
+    for seat in seats:
+        if seat[0] * seat[1] != occupied[0] * occupied[1]:
+            free_seats.append(seat)
+
+    for seat in free_seats:
         print(f"Car number: {seat[0]} - Seat number: {seat[1]}")
 
 
