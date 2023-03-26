@@ -4,8 +4,7 @@ from constants import con
 
 cursor = con.cursor()
 
-
-def get_train_route(railway_station, weekday):
+def get_train_route(railway_station: str, weekday: str) -> list:
     weekdays = [
         "Monday",
         "Tuesday",
@@ -38,9 +37,9 @@ def get_train_route(railway_station, weekday):
     cleaned_info = []
 
     train_routes = cursor.execute(
-        """SELECT TrainRoute.TrainRouteID, TrainRoute.Direction, TrainOccurence.RouteDate, TrackSection.StartStation, TrackSection.EndStation FROM TrainRoute
+        """SELECT DISTINCT TrainRoute.TrainRouteID, TrainRoute.Direction, TrainOccurence.RouteDate, TrackSection.StartStation, TrackSection.EndStation FROM TrainRoute
         LEFT JOIN TrainOccurence ON TrainOccurence.RouteID = TrainRoute.TrainRouteID
-        LEFT JOIN TrackSection ON TrainRoute.TrackID = TrackSection.TrackID 
+        LEFT JOIN TrackSection ON TrainRoute.TrackID = TrackSection.TrackID
         LEFT JOIN HasSubsection ON TrackSection.TrackID = HasSubsection.TrackID
         LEFT JOIN Subsection ON HasSubsection.SubsectionID = Subsection.SubsectionID
         WHERE Subsection.StartStation = ? OR TrackSection.EndStation = ?""",
