@@ -30,7 +30,6 @@ def get_valid_night_train(route_id, station):
     station_time = None
     start_station_time = None
 
-    print(res)
     for row in res:
         if row[2] == station:
             station_time = row[3]
@@ -42,9 +41,6 @@ def get_valid_night_train(route_id, station):
     if station_time is None or start_station_time is None:
         return False
     return station_time < start_station_time
-
-
-print(get_valid_night_train(2, "Mosjøen"))
 
 
 def get_train_route_between_two_stations(start, end, date, time):
@@ -87,7 +83,7 @@ def get_train_route_between_two_stations(start, end, date, time):
 
     for route_id, route_tuple in routes.items():
         for subsection in route_tuple:
-            print(subsection)
+
             if direction and (not subsection[1]):
                 continue
             elif not direction and subsection[1]:
@@ -129,7 +125,7 @@ def get_train_route_between_two_stations(start, end, date, time):
                     valid_results[route_id].append(subsection)
 
     valid_routes = []
-    print(valid_results)
+
     for valid_route_tuple in valid_results.values():
         for subsection in valid_route_tuple:
             valid_routes.append(subsection)
