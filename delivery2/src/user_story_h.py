@@ -53,7 +53,11 @@ def get_tickets(order):
     if not (seat_tickets or bed_tickets):
         print("No tickets found for order ID", order[0])
         return []
-    tickets = [list(ticket) for ticket in seat_tickets.extend(bed_tickets)]
+    tickets = []
+    for ticket in seat_tickets:
+        tickets.append(ticket)
+    for ticket in bed_tickets:
+        tickets.append(ticket)
     return tickets
 
 
@@ -64,5 +68,6 @@ def print_all_tickets():
         print("Order date and time:", order[1])
         print("Tickets:")
         tickets = get_tickets(order)
-        (print(ticket) for ticket in tickets)
+        for ticket in tickets:
+            print(f"{ticket[2]} - {ticket[3]}   Car: {ticket[6]} Seat: {ticket[7]}")
         print()
