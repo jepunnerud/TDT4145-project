@@ -1,9 +1,8 @@
-import sqlite3
 import math
+from constants import con
 
 
 def fillExampleData():
-    con = sqlite3.connect("trainDB.db")
     cursor = con.cursor()
 
     # Railway stations on Nordlandsbanen
@@ -113,4 +112,3 @@ def fillExampleData():
     cursor.execute("INSERT INTO RouteTimetable VALUES (3, 'Trondheim', '14:13')")
 
     con.commit()
-    con.close()

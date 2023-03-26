@@ -1,15 +1,8 @@
-# Registered customers should be able to find available tickets for
-# a desired train route and purchase the tickets they would like.
-# This functionality should be programmed.
-#
-# Make sure to only sell available seats.
-
-import sqlite3
+from constants import con
 from user_story_h import get_customer
 from user_story_c import get_train_route
 from datetime import datetime
 
-con = sqlite3.connect("trainDB.db")
 cursor = con.cursor()
 
 
@@ -215,3 +208,7 @@ def date_to_weekday(date):
         "Sunday",
     ]
     return weekdays[datetime.strptime(date, "%Y-%m-%d").weekday()]
+
+
+def purchase_ticket(user, tickets):
+    con.execute("INSERT")

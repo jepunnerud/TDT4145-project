@@ -1,8 +1,7 @@
-import sqlite3
+from constants import con
 
 
 def createTables():
-    con = sqlite3.connect("trainDB.db")
     cursor = con.cursor()
 
     cursor.execute(
@@ -260,4 +259,3 @@ def createTables():
     )
 
     con.commit()
-    con.close()
