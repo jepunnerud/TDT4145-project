@@ -10,38 +10,40 @@ con = sqlite3.connect("trainDB.db")
 cursor = con.cursor()
 
 
-def find_available_ticket(train_route):
+def find_available_seat(train_route, date):
 
-    available_tickets = []
+    available_seats = cursor.execute(
+        """SELECT ChairCar.CarID, Seat.SeatNo FROM Seat
+        LEFT JOIN ChairCar ON Seat.CarID = ChairCar.CarID
+        LEFT JOIN CarInArrangement ON ChairCar.CarID = CarInArrangement.CarID
+        LEFT JOIN TrainRoute ON TrainRoute.ArrangementID = CarInArrangement.ArrangementID
+        LEFT JOIN TrainOccurence ON TrainOccurence.RouteID = TrainRoute.TrainRouteID
+        WHERE TrainRoute.TrainRouteID = ? AND TrainOccurence.RouteDate = ?""",
+        (train_route, date),
+    )
+    available_seats = list(available_seats)
 
-    available_seat_tickets = cursor.execute(
-        """SELECT TicketNo, TicketStart, TicketEnd FROM SeatTicket 
-            WHERE NOT EXISTS (SELECT OrderNo FROM CustomerOrder 
-            WHERE CustomerOrder.OrderNo = SeatTicket.OrderNo)"""
+    for seat in available_seats:
+        print(f"Car number: {seat[0]} - Seat number: {seat[1]}")
+
+
+def find_available_bed(train_route, date):
+
+    available_beds = cursor.execute(
+        """SELECT SleepingCar.CarID, Bed.CompartmentNo, Bed.BedNo FROM Bed
+        LEFT JOIN SleepingCar ON Bed.CarID = SleepingCar.CarID
+        LEFT JOIN CarInArrangement ON SleepingCar.CarID = CarInArrangement.CarID
+        LEFT JOIN TrainRoute ON TrainRoute.ArrangementID = CarInArrangement.ArrangementID
+        LEFT JOIN TrainOccurence ON TrainOccurence.RouteID = TrainRoute.TrainRouteID
+        WHERE TrainRoute.TrainRouteID = ? AND TrainOccurence.RouteDate = ?""",
+        (train_route, date),
     )
 
-    available_bed_tickets = con.execute(
-        """SELECT TicketNo, TicketStart, TicketEnd FROM BedTicket 
-            WHERE NOT EXISTS (SELECT OrderNo FROM CustomerOrder 
-            WHERE CustomerOrder.OrderNo = BedTicket.OrderNo)"""
-    )
-
-    for ticket in available_seat_tickets:
-        list_ticket = list(ticket)
-        list_ticket.insert(0, "seat")
-        available_tickets.append(list_ticket)
-
-    for ticket in available_bed_tickets:
-        list_ticket = list(ticket)
-        list_ticket.insert(0, "bed")
-        available_tickets.append(list_ticket)
-
-    print(available_tickets)
+    available_beds = list(available_beds)
+    for bed in available_beds:
+        print(f"Car number: {bed[0]} Compartment {bed[1]} - Bed: {bed[2]%2 + 1}")
 
 
-def purchase_ticket(user, tickets):
-    con.execute("INSERT")
-
-
-find_available_ticket(1)
+find_available_seat(2, "2023-04-03")
+find_available_bed(2, "2023-04-03")
 con.close()
