@@ -70,4 +70,4 @@ def print_all_tickets(orders):
         print()
 
 
-get_orders()
+# get_orders()

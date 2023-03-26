@@ -61,8 +61,7 @@ def find_available_seat(train_route, date):
         LEFT JOIN CarInArrangement ON ChairCar.CarID = CarInArrangement.CarID
         LEFT JOIN TrainRoute ON TrainRoute.ArrangementID = CarInArrangement.ArrangementID
         LEFT JOIN TrainOccurence ON TrainOccurence.RouteID = TrainRoute.TrainRouteID
-        WHERE TrainRoute.TrainRouteID = ? AND TrainOccurence.RouteDate = ? 
-        AND NOT EXISTS (SELECT SeatTicket.SeatNo FROM SeatTicket """,
+        WHERE TrainRoute.TrainRouteID = ? AND TrainOccurence.RouteDate = ?""",
         (train_route, date),
     )
     seats = cursor.fetchall()
@@ -75,12 +74,23 @@ def find_available_seat(train_route, date):
     occupied = cursor.fetchall()
 
     free_seats = []
-    for seat in seats:
-        if seat[0] * seat[1] != occupied[0] * occupied[1]:
+    print(seats)
+    print(seats[0][0] * seats[0][1])
+    print(occupied)
+
+    if len(occupied) > 0:
+        for seat in seats:
+            for o_seat in occupied:
+                if seat[0] * seat[1] != o_seat[0] * o_seat[1]:
+                    free_seats.append(seat)
+    else:
+        for seat in seats:
             free_seats.append(seat)
 
     for seat in free_seats:
         print(f"Car number: {seat[0]} - Seat number: {seat[1]}")
+
+    return occupied
 
 
 def find_available_bed(train_route, date):
@@ -107,12 +117,28 @@ def handle_seat_purchase(OrderNo, date):
     end = input("Where to where would you like to travel to? (Station): ")
     get_train_route(start, date_to_weekday(date))
     train_route = input("Which route would you like to travel on? (Route number): ")
-    find_available_seat(int(train_route), date)
+    invalid_seats = find_available_seat(int(train_route), date)
+    car_number = input("Which car would you like? (Car number): ")
     seat_number = input("Which seat would you like to purchase? (Seat number): ")
+    if len(invalid_seats) > 0:
+        valid = False
+    else:
+        valid = True
+    while valid == False:
+        for seat in invalid_seats:
+            if seat[0] == car_number and seat[1] == seat_number:
+                print("This seat is occupied, please choose another")
+                car_number = input("Which car would you like? (Car number): ")
+                seat_number = input(
+                    "Which seat would you like to purchase? (Seat number): "
+                )
+            else:
+                valid = True
+
     cursor.execute("SELECT COUNT(*) FROM SeatTicket")
     seat_ticketNo = cursor.fetchone()[0] + 1
     cursor.execute(
-        """INSERT INTO SeatTicket VALUES (?, ?, ?, ?, ?, ?, ?)""",
+        """INSERT INTO SeatTicket VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
         (
             seat_ticketNo,
             OrderNo,
@@ -120,6 +146,7 @@ def handle_seat_purchase(OrderNo, date):
             end,
             train_route,
             date,
+            int(car_number),
             int(seat_number),
         ),
     )
