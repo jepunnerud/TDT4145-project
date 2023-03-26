@@ -47,12 +47,6 @@ def get_train_route_between_two_stations(start, end, date, time):
     if start == end:
         print("Start and end station are the same")
         return
-    if not (
-        get_train_route(start, datetime.fromisoformat(date).strftime("%A"))
-        and get_train_route(end, datetime.fromisoformat(date).strftime("%A"))
-    ):
-        print("No routes found on the given date and stations")
-        return
     res = cursor.execute(
         """WITH RouteOnDate (RouteID, Direction, RouteDate, TrackID) AS (SELECT TR.TrainRouteID, TR.Direction, TrO.RouteDate, TR.TrackID FROM TrainOccurence as TrO
                 LEFT JOIN TrainRoute as TR ON TrO.RouteID = TR.TrainRouteID
@@ -145,8 +139,3 @@ def get_train_route_between_two_stations(start, end, date, time):
             )
 
     return
-
-
-get_train_route_between_two_stations(
-    "Steinkjer", "Fauske", "2023-04-03", "08:00:00"
-)
