@@ -1,8 +1,8 @@
 # retrieve information about all tickets purchased by a customer
 
 import sqlite3
+from constants import con
 
-con = sqlite3.connect("trainDB.db")
 cursor = con.cursor()
 
 
@@ -60,7 +60,8 @@ def get_tickets(order):
     return tickets
 
 
-def print_all_tickets(orders):
+def print_all_tickets():
+    orders = get_orders()
     for order in orders:
         print("Order number:", order[0])
         print("Order date and time:", order[1])
@@ -68,8 +69,3 @@ def print_all_tickets(orders):
         tickets = get_tickets(order)
         (print(ticket) for ticket in tickets)
         print()
-
-
-print_all_tickets(get_orders())
-
-con.close()

@@ -1,9 +1,9 @@
 import sqlite3
+from constants import con
 from user_story_c import get_train_route
 from datetime import datetime
 from dateutil import parser
 
-con = sqlite3.connect("trainDB.db")
 cursor = con.cursor()
 
 
