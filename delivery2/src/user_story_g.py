@@ -46,15 +46,12 @@ def purchase_ticket():
                     try_again = input("Would you like to try again?: (yes/no): ")
                     if try_again.lower() == "no":
                         place_order = False
-
-                order_another = input("Would you like to order another?: (yes/no): ")
-                if order_another.lower() == "no":
+                finished = input("Do you want to order another? (yes/no): ")
+                if finished == "no":
                     place_order = False
 
 
-def find_available_seat(train_route, date):
-
-    print(train_route)
+def find_available_seat(train_route, date, OrderNo, start, end):
     cursor.execute(
         """SELECT ChairCar.CarID, Seat.SeatNo FROM Seat
         LEFT JOIN ChairCar ON Seat.CarID = ChairCar.CarID
@@ -74,9 +71,6 @@ def find_available_seat(train_route, date):
     occupied = cursor.fetchall()
 
     free_seats = []
-    print(seats)
-    print(seats[0][0] * seats[0][1])
-    print(occupied)
 
     if len(occupied) > 0:
         for seat in seats:
@@ -90,12 +84,40 @@ def find_available_seat(train_route, date):
     for seat in free_seats:
         print(f"Car number: {seat[0]} - Seat number: {seat[1]}")
 
-    return occupied
+    car_number = input("Which car would you like? (Car number): ")
+    seat_number = input("Which seat would you like to purchase? (Seat number): ")
+    valid = True
+    if len(occupied) > 0:
+        for seat in occupied:
+            if seat[0] == int(car_number) and seat[1] == int(seat_number):
+                valid = False
+
+    if valid:
+        cursor.execute("SELECT COUNT(*) FROM SeatTicket")
+        seat_ticketNo = cursor.fetchone()[0] + 1
+        cursor.execute(
+            """INSERT INTO SeatTicket VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+            (
+                seat_ticketNo,
+                OrderNo,
+                start,
+                end,
+                train_route,
+                date,
+                int(car_number),
+                int(seat_number),
+            ),
+        )
+        con.commit()
+        print(
+            f"Ticket from {start} to {end} on {date} successfully ordered! Car: {car_number} Seat: {seat_number}"
+        )
+    else:
+        print("This seat is occupied, please choose another")
 
 
-def find_available_bed(train_route, date):
-
-    available_beds = cursor.execute(
+def find_available_bed(train_route, date, OrderNo, start, end):
+    cursor.execute(
         """SELECT SleepingCar.CarID, Bed.CompartmentNo, Bed.BedNo FROM Bed
         LEFT JOIN SleepingCar ON Bed.CarID = SleepingCar.CarID
         LEFT JOIN CarInArrangement ON SleepingCar.CarID = CarInArrangement.CarID
@@ -105,11 +127,65 @@ def find_available_bed(train_route, date):
         (train_route, date),
     )
 
-    available_beds = list(available_beds)
-    for bed in available_beds:
+    beds = cursor.fetchall()
+
+    cursor.execute(
+        """SELECT BedTicket.CarID, BedTicket.CompartmentNo, BedTicket.BedNo, BedTicket.TicketStart, BedTicket.TicketEnd, CustomerOrder.OrderNo FROM BedTicket
+                                    INNER JOIN CustomerOrder ON CustomerOrder.OrderNo = BedTicket.OrderNo
+                                    WHERE BedTicket.OrderNo = CustomerOrder.OrderNo"""
+    )
+    occupied = cursor.fetchall()
+
+    free_beds = []
+
+    if len(occupied) > 0:
+        for bed in beds:
+            for o_bed in occupied:
+                if bed[0] * bed[1] != o_bed[0] * o_bed[1]:
+                    free_beds.append(bed)
+    else:
+        for bed in beds:
+            free_beds.append(bed)
+
+    for bed in free_beds:
         print(
-            f"Ticket number: {available_beds.index(bed)} Car number: {bed[0]} Compartment {bed[1]} - Bed: {bed[2]}"
+            f"Car number: {bed[0]} - compartment number: {bed[1]} - bed number: {bed[2]}"
         )
+
+    car_number = input("Which car would you like? (Car number): ")
+    compartment_number = input(
+        "Which compartment would you like? (Compartment number): "
+    )
+    bed_number = input("Which bed would you like to purchase? (Bed number): ")
+    valid = True
+    if len(occupied) > 0:
+        for bed in occupied:
+            if bed[0] == int(car_number) and bed[1] == int(bed_number):
+                valid = False
+
+    if valid:
+        cursor.execute("SELECT COUNT(*) FROM BedTicket")
+        bed_ticketNo = cursor.fetchone()[0] + 1
+        cursor.execute(
+            """INSERT INTO BedTicket VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (
+                bed_ticketNo,
+                OrderNo,
+                start,
+                end,
+                train_route,
+                date,
+                int(car_number),
+                int(compartment_number),
+                int(bed_number),
+            ),
+        )
+        con.commit()
+        print(
+            f"Ticket from {start} to {end} on {date} successfully ordered! Car: {car_number} bed: {bed_number}"
+        )
+    else:
+        print("This bed or compartment is occupied, please choose another")
 
 
 def handle_seat_purchase(OrderNo, date):
@@ -117,68 +193,15 @@ def handle_seat_purchase(OrderNo, date):
     end = input("Where to where would you like to travel to? (Station): ")
     get_train_route(start, date_to_weekday(date))
     train_route = input("Which route would you like to travel on? (Route number): ")
-    invalid_seats = find_available_seat(int(train_route), date)
-    car_number = input("Which car would you like? (Car number): ")
-    seat_number = input("Which seat would you like to purchase? (Seat number): ")
-    if len(invalid_seats) > 0:
-        valid = False
-    else:
-        valid = True
-    while valid == False:
-        for seat in invalid_seats:
-            if seat[0] == car_number and seat[1] == seat_number:
-                print("This seat is occupied, please choose another")
-                car_number = input("Which car would you like? (Car number): ")
-                seat_number = input(
-                    "Which seat would you like to purchase? (Seat number): "
-                )
-            else:
-                valid = True
-
-    cursor.execute("SELECT COUNT(*) FROM SeatTicket")
-    seat_ticketNo = cursor.fetchone()[0] + 1
-    cursor.execute(
-        """INSERT INTO SeatTicket VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
-        (
-            seat_ticketNo,
-            OrderNo,
-            start,
-            end,
-            train_route,
-            date,
-            int(car_number),
-            int(seat_number),
-        ),
-    )
-    con.commit()
+    find_available_seat(int(train_route), date, OrderNo, start, end)
 
 
 def handle_bed_purchase(OrderNo, date):
-    start_end = input("From where to where would you like to travel? (Start, End): ")
-    start_end.split(",")
-    start_end[1].strip()
-    train_route = get_train_route(start_end[0], date_to_weekday(date))[0]
-    find_available_bed(train_route, date)
-    order = input("Would you like to purchase a bed ticket? (yes/no): ")
-    if order.lower() == "yes":
-        bed_number = input("Which bed would you like to purchase? (Bed number): ")
-        cursor.execute("SELECT COUNT(*) FROM BedTicket")
-        bed_ticketNo = cursor.fetchone()[0] + 1
-
-        affirmation = input("Are you sure? (yes/no): ")
-        if affirmation.lower() == "yes":
-            cursor.execute(
-                """ INSERT INTO Ticket (TicketNo, OrderNo, TicketStart, TicketEnd, TicketDate, BedNo)""",
-                (
-                    bed_ticketNo,
-                    OrderNo,
-                    start_end[0],
-                    start_end[1],
-                    date,
-                    int(bed_number),
-                ),
-            )
-            con.commit()
+    start = input("Where to where would you like to travel from? (Station): ")
+    end = input("Where to where would you like to travel to? (Station): ")
+    get_train_route(start, date_to_weekday(date))
+    train_route = input("Which route would you like to travel on? (Route number): ")
+    find_available_bed(train_route, date, OrderNo, start, end)
 
 
 def date_to_weekday(date):
