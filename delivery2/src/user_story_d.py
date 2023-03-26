@@ -1,6 +1,6 @@
 from constants import con
 from user_story_c import get_train_route
-from datetime import datetime
+from datetime import datetime, timedelta
 from dateutil import parser
 
 cursor = con.cursor()
@@ -18,6 +18,33 @@ def start_after_end(start, end):
     )
     res = res.fetchall()
     return res[0][0] == start
+
+
+def get_valid_night_train(route_id, station):
+    cursor.execute(
+        f"""Select TR.TrainRouteID, TrO.RouteDate, RTT.RailwayStation, RTT.Time, TS.StartStation from TrainOccurence as TrO inner join TrainRoute as TR On TrO.RouteID = TR.TrainRouteID INNER JOIN TrackSection As TS on TS.TrackID = TR.TrackID Inner join RouteTimetable As RTT ON TR.TrainRouteID = RTT.RouteID
+            where RTT.RouteID = {route_id} AND (RTT.RailwayStation = '{station}' OR RTT.RailwayStation = TS.StartStation);"""
+    )
+    res = cursor.fetchall()
+
+    station_time = None
+    start_station_time = None
+
+    print(res)
+    for row in res:
+        if row[2] == station:
+            station_time = row[3]
+            continue
+        elif row[2] == row[4]:
+            start_station_time = row[3]
+            continue
+
+    if station_time is None or start_station_time is None:
+        return False
+    return station_time < start_station_time
+
+
+print(get_valid_night_train(2, "Mosjøen"))
 
 
 def get_train_route_between_two_stations(start, end, date, time):
@@ -49,12 +76,18 @@ def get_train_route_between_two_stations(start, end, date, time):
             routes[row[0]] = []
         routes[row[0]].append(row)
 
+    date_list = [row[2] for row in clean]
+    if date not in date_list:
+        print("No routes found on the given date")
+        return
+
     direction = start_after_end(start, end)
 
     valid_results = {}
 
     for route_id, route_tuple in routes.items():
         for subsection in route_tuple:
+            print(subsection)
             if direction and (not subsection[1]):
                 continue
             elif not direction and subsection[1]:
@@ -62,23 +95,48 @@ def get_train_route_between_two_stations(start, end, date, time):
             else:
                 if (
                     route_id not in valid_results
-                    and subsection[7] > time
-                    and start in subsection
+                    and (
+                        subsection[7] > time
+                        or get_valid_night_train(route_id, start)
+                    )
+                    and (
+                        (start == subsection[5] and not direction)
+                        or (start == subsection[6] and direction)
+                    )
                 ):
+                    if get_valid_night_train(route_id, start):
+                        subsection[2] = (
+                            datetime.fromisoformat(subsection[2])
+                            + timedelta(days=1)
+                        ).strftime("%Y-%m-%d")
                     valid_results[route_id] = [subsection]
                 elif (
                     route_id in valid_results
-                    and subsection[7] > time
-                    and start in subsection
+                    and (
+                        subsection[7] > time
+                        or get_valid_night_train(route_id, start)
+                    )
+                    and (
+                        (start == subsection[5] and not direction)
+                        or (start == subsection[6] and direction)
+                    )
                 ):
+                    if get_valid_night_train(route_id, start):
+                        subsection[2] = (
+                            datetime.fromisoformat(subsection[2])
+                            + timedelta(days=1)
+                        ).strftime("%Y-%m-%d")
                     valid_results[route_id].append(subsection)
 
     valid_routes = []
+    print(valid_results)
     for valid_route_tuple in valid_results.values():
         for subsection in valid_route_tuple:
             valid_routes.append(subsection)
 
-    sorted_by_date = sorted(valid_routes, key=lambda x: parser.isoparse(x[2]))
+    sorted_by_date = sorted(
+        valid_routes, key=lambda x: (parser.isoparse(x[2]), x[7])
+    )
 
     if not valid_results:
         print("No routes found on the given date and stations")
@@ -91,3 +149,8 @@ def get_train_route_between_two_stations(start, end, date, time):
             )
 
     return
+
+
+get_train_route_between_two_stations(
+    "Steinkjer", "Fauske", "2023-04-03", "08:00:00"
+)
