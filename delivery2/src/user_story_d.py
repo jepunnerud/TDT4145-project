@@ -1,6 +1,6 @@
 import sqlite3
+from constants import con
 
-con = sqlite3.connect("trainDB.db")
 cursor = con.cursor()
 
 

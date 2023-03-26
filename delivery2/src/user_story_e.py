@@ -1,8 +1,8 @@
 # The user should be able to register in the customer registry. This functionality should be programmed.
 
 import sqlite3
+from constants import con
 
-con = sqlite3.connect("trainDB.db")
 cursor = con.cursor()
 
 
@@ -41,7 +41,3 @@ def register_customer():
     )
     con.commit()
     print("Customer registered successfully!")
-
-
-register_customer()
-con.close()

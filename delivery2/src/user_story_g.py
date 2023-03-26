@@ -5,8 +5,8 @@
 # Make sure to only sell available seats.
 
 import sqlite3
+from constants import con
 
-con = sqlite3.connect("trainDB.db")
 cursor = con.cursor()
 
 
@@ -41,7 +41,3 @@ def find_available_ticket(train_route):
 
 def purchase_ticket(user, tickets):
     con.execute("INSERT")
-
-
-find_available_ticket(1)
-con.close()
