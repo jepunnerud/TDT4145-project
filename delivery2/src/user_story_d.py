@@ -1,4 +1,3 @@
-import sqlite3
 from constants import con
 from user_story_c import get_train_route
 from datetime import datetime
@@ -92,8 +91,3 @@ def get_train_route_between_two_stations(start, end, date, time):
             )
 
     return
-
-
-get_train_route_between_two_stations(
-    "Trondheim", "Steinkjer", "2023-04-03", "07:00"
-)

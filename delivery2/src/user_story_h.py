@@ -1,6 +1,3 @@
-# retrieve information about all tickets purchased by a customer
-
-import sqlite3
 from constants import con
 
 cursor = con.cursor()

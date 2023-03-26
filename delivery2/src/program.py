@@ -1,14 +1,12 @@
-import sqlite3
 from datetime import datetime
 from createTables import createTables
 from fillExampleData import fillExampleData
 from user_story_c import get_train_route
+from user_story_d import get_train_route_between_two_stations
 from user_story_e import register_customer
 from user_story_h import print_all_tickets
+from re import search
 from constants import con
-
-# write a program loop using the different python programs located in the src foulder
-# the program should be able to do the following:
 
 
 def user_story_c():
@@ -18,7 +16,40 @@ def user_story_c():
 
 
 def user_story_d():
-    return
+    valid_stations = [
+        "Trondheim",
+        "Steinkjer",
+        "Mosjøen",
+        "Mo i Rana",
+        "Fauske",
+        "Bodø",
+    ]
+
+    station_1 = input("Starting station: ")
+    while station_1 not in valid_stations:
+        station_1 = input("Please enter a valid station or [q]uit: ")
+        if station_1 == "q":
+            return
+
+    station_2 = input("Ending station: ")
+    while station_2 not in valid_stations:
+        station_2 = input("Please enter a valid station or [q]uit: ")
+        if station_2 == "q":
+            return
+
+    date = input("What date? (YYYY-MM-DD): ")
+    match = search("^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$", date)
+    while match is None:
+        date = input("Please enter a valid date (YYYY-MM-DD): ")
+        match = search("^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$", date)
+
+    time = input("What time? (HH:MM): ")
+    match = search("^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$", time)
+    while match is None:
+        time = input("Please enter a valid time (HH:MM): ")
+        match = search("^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$", time)
+
+    get_train_route_between_two_stations(station_1, station_2, date, time)
 
 
 def user_story_e():

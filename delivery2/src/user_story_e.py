@@ -1,6 +1,3 @@
-# The user should be able to register in the customer registry. This functionality should be programmed.
-
-import sqlite3
 from constants import con
 
 cursor = con.cursor()

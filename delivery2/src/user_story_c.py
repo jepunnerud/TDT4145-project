@@ -1,8 +1,8 @@
-import sqlite3
 from datetime import datetime
 from constants import con
 
 cursor = con.cursor()
+
 
 def get_train_route(railway_station: str, weekday: str) -> list:
     weekdays = [

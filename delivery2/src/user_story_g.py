@@ -1,10 +1,3 @@
-# Registered customers should be able to find available tickets for
-# a desired train route and purchase the tickets they would like.
-# This functionality should be programmed.
-#
-# Make sure to only sell available seats.
-
-import sqlite3
 from constants import con
 
 cursor = con.cursor()
