@@ -73,15 +73,14 @@ def loop():
     print("Welcome to this train system!")
     while True:
         print(
-            "[1] Show all train routes that stop on a given station on a given weekday"
+            """[1] Show all train routes that stop on a given station on a given weekday
+[2] Search for train routes going between a starting station and an ending station based on date and time
+[3] Register as a customer
+[4] Book a train ticket
+[5] Show all train tickets booked by a given customer
+[6] Quit
+            """
         )
-        print(
-            "[2] Search for train routes going between a starting station and an ending station based on date and time"
-        )
-        print("[3] Register as a customer")
-        print("[4] Book a train ticket")
-        print("[5] Show all train tickets booked by a given customer")
-        print("[6] Quit")
         answer = input("Please choose one of the options above: ")
         print()
         if answer == "1":
