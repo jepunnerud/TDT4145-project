@@ -4,6 +4,7 @@ from fillExampleData import fillExampleData
 from user_story_c import get_train_route
 from user_story_d import get_train_route_between_two_stations
 from user_story_e import register_customer
+from user_story_g import purchase_ticket
 from user_story_h import print_all_tickets
 from re import search
 from constants import con
@@ -57,7 +58,7 @@ def user_story_e():
 
 
 def user_story_g():
-    return
+    purchase_ticket()
 
 
 def user_story_h():

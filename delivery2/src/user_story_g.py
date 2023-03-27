@@ -208,7 +208,3 @@ def date_to_weekday(date):
         "Sunday",
     ]
     return weekdays[datetime.strptime(date, "%Y-%m-%d").weekday()]
-
-
-def purchase_ticket(user, tickets):
-    con.execute("INSERT")
